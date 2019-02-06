@@ -251,7 +251,7 @@ class GraphWin(tk.Canvas):
     def _onKey(self, evnt):
         self.lastKey = evnt.keysym
 
-
+# test
     def setBackground(self, color):
         """Set background color of the window"""
         self.__checkOpen()
