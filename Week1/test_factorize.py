@@ -24,9 +24,7 @@ class TestFactorize(unittest.TestCase):
         for x in cases:
             with self.subTest(x=x):
                 result = factorize(x)
-                test_result = []
-                test_result.append(x)
-                self.assertEqual(result, tuple(test_result))
+                self.assertEqual(result, (x,))
 
     def test_simple_numbers(self):
         """ Что для простых чисел 3, 13, 29 возвращается кортеж, содержащий одно данное число. """
@@ -34,9 +32,7 @@ class TestFactorize(unittest.TestCase):
         for x in cases:
             with self.subTest(x=x):
                 result = factorize(x)
-                test_result = []
-                test_result.append(x)
-                self.assertEqual(result, tuple(test_result))
+                self.assertEqual(result, (x,))
 
     def test_two_simple_multipliers(self):
         """ Что для чисел 6, 26, 121 возвращаются соответственно кортежи (2, 3), (2, 13) и (11, 11). """
