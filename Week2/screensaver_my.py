@@ -38,10 +38,11 @@ class Vec2d:
 
 class Polyline:
     """ Класс замкнутых линий """
-    def __init__(self):
+    def __init__(self, speed=2):
         self._points = []
         self._speeds = []
         self._screen = (800, 600)
+        self._speed = speed
 
     def __len__(self):
         return len(self._points)
@@ -52,13 +53,29 @@ class Polyline:
     def __getitem__(self, index):
         return self._points[index]
 
+    speed = property()  # свойство количество точек сглаживания
+
+    @speed.setter
+    def speed(self, value):
+        self._speed = value if value > 0 else 1
+
+    @speed.getter
+    def speed(self):
+        return self._speed
+
     def add_point(self, point, speed):  # добавление в ломаную точки и ее скорости
         self._points.append(point)
         self._speeds.append(speed)
 
+    def delete_point(self, index=None):  # удаление точки по индексу
+        if index is None:
+            index = len(self._points) - 1
+        del self._points[index]
+        del self._speeds[index]
+
     def set_points(self):  # пересчет координат точек на скорость
         for i in range(len(self._points)):
-            self._points[i] = self._points[i] + self._speeds[i]
+            self._points[i] = self._points[i] + self._speeds[i] * self._speed
             if self._points[i][0] > self._screen[0] or self._points[i][0] < 0:
                 self._speeds[i] = Vec2d(- self._speeds[i][0], self._speeds[i][1])
             if self._points[i][1] > self._screen[1] or self._points[i][1] < 0:
@@ -119,6 +136,10 @@ class Knot(Polyline):
         super().add_point(point, speed)
         self._get_knot()
 
+    def delete_point(self, index=None):  # удаление точки по индексу (переопределенная)
+        super().delete_point(index)
+        self._get_knot()
+
     def set_points(self):  # пересчет координат точек на скорость (переопределенная)
         super().set_points()
         self._get_knot()
@@ -141,7 +162,9 @@ def draw_help():
     font1 = pygame.font.SysFont("courier", 24)
     font2 = pygame.font.SysFont("serif", 24)
     data = [["F1", "Show Help"], ["R", "Restart"], ["P", "Pause/Play"], ["Num+", "More points"],
-            ["Num-", "Less points"], ["", ""], [str(poly.count), "Current points"]]
+            ["Num-", "Less points"], ["Backspace", "Delete last point"],
+            ["Num*", "More speed"], ["Num/", "Less speed"],
+            ["", ""], [str(poly.count), "Current points"], [str(poly.speed), "Current speed"]]
 
     pygame.draw.lines(gameDisplay, (255, 50, 50, 255), True, [
                       (0, 0), (800, 0), (800, 600), (0, 600)], 5)
@@ -189,19 +212,27 @@ if __name__ == "__main__":
                 # Num+ - увеличиваем количество точек сглаживания
                 if event.key == pygame.K_KP_PLUS:
                     poly.count += 1
-                    # steps += 1
                 # F1 - открытие/закрытие окна помощи
                 if event.key == pygame.K_F1:
                     show_help = not show_help
                 # Num- - уменьшаем количество точек сглаживания
                 if event.key == pygame.K_KP_MINUS:
                     poly.count -= 1
-                    # steps -= 1 if steps > 1 else 0
+                # Backspace - удаление последней добавленной точки
+                if event.key == pygame.K_BACKSPACE:
+                    poly.delete_point()
+                # Num* - увеличиваем скорость движения кривой
+                if event.key == pygame.K_KP_MULTIPLY:
+                    poly.speed += 1
+                # Num / - уменьшаем скорость движения кривой
+                if event.key == pygame.K_KP_DIVIDE:
+                    poly.speed -= 1
+
             # отлавливаем событие с мыши - клик любой кнопкой - добавляем точку в
             # полилайн и генерируем скорость для этой точки
             if event.type == pygame.MOUSEBUTTONDOWN:
                 point_event = Vec2d(event.pos[0], event.pos[1])
-                speed_event = Vec2d(random.random() * 2, random.random() * 2)
+                speed_event = Vec2d(random.random(), random.random())
                 poly.add_point(point_event, speed_event)
 
         # отрисовка окна
