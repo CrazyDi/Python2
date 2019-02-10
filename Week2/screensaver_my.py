@@ -85,41 +85,47 @@ class Knot(Polyline):
 
     @count.setter
     def count(self, value):
-        self._count -= value if self._count > 1 else 0
+        self._count = value if value > 0 else 1
 
     @count.getter
     def count(self):
         return self._count
 
-    def get_point(points, alpha, deg=None):
+    # сглаживание кривой
+    def _get_point(self, points, alpha, deg=None):
         if deg is None:
             deg = len(points) - 1
         if deg == 0:
             return points[0]
-        return add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha))
+        return points[deg] * alpha + self._get_point(points, alpha, deg - 1) * (1 - alpha)
 
-    def get_points(base_points, count):
-        alpha = 1 / count
+    def _get_points(self, base_points):
+        alpha = 1 / self._count
         res = []
-        for i in range(count):
-            res.append(get_point(base_points, i * alpha))
+        for i in range(self._count):
+            res.append(self._get_point(base_points, i * alpha))
         return res
 
-    def get_knot(points, count):
-        if len(points) < 3:
-            return []
-        res = []
-        for i in range(-2, len(points) - 2):
-            ptn = []
-            ptn.append(mul(add(points[i], points[i + 1]), 0.5))
-            ptn.append(points[i + 1])
-            ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
+    def _get_knot(self):
+        self._points_knot = []
 
-            res.extend(get_points(ptn, count))
-        return res
+        if len(self) >= 3:
+            for i in range(-2, len(self) - 2):
+                ptn = [(self[i] + self[i + 1]) * 0.5, self[i + 1], (self[i + 1] + self[i + 2]) * 0.5]
 
-    def draw_points(self, display, style="points", width=3, color=(255, 255, 255)):  # рисование точек и линий
-        self._points_knot = self
+                self._points_knot.extend(self._get_points(ptn))
+
+    def add_point(self, point, speed):  # добавление в ломаную точки и ее скорости (переопределенная)
+        super().add_point(point, speed)
+        self._get_knot()
+
+    def set_points(self):  # пересчет координат точек на скорость (переопределенная)
+        super().set_points()
+        self._get_knot()
+
+    # рисование точек и линий (переопределенная)
+    def draw_points(self, display, style="points", width=3, color=(255, 255, 255)):
+        # self._get_knot()
         if style == "line":
             for i in range(-1, len(self._points_knot) - 1):
                 pygame.draw.line(display, color, (int(self._points_knot[i][0]), int(self._points_knot[i][1])),
@@ -129,6 +135,22 @@ class Knot(Polyline):
                 pygame.draw.circle(display, color, (int(i[0]), int(i[1])), width)
 
 
+# Отрисовка справки
+def draw_help():
+    gameDisplay.fill((50, 50, 50))
+    font1 = pygame.font.SysFont("courier", 24)
+    font2 = pygame.font.SysFont("serif", 24)
+    data = [["F1", "Show Help"], ["R", "Restart"], ["P", "Pause/Play"], ["Num+", "More points"],
+            ["Num-", "Less points"], ["", ""], [str(poly.count), "Current points"]]
+
+    pygame.draw.lines(gameDisplay, (255, 50, 50, 255), True, [
+                      (0, 0), (800, 0), (800, 600), (0, 600)], 5)
+    for i, text in enumerate(data):
+        gameDisplay.blit(font1.render(
+            text[0], True, (128, 128, 255)), (100, 100 + 30 * i))
+        gameDisplay.blit(font2.render(
+            text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
+
 
 # Основная программа
 if __name__ == "__main__":
@@ -137,12 +159,10 @@ if __name__ == "__main__":
     gameDisplay = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("MyScreenSaver")
 
-    # steps = 35  # количество точек сглаживания
     working = True  # маркер работы
     poly = Knot(35)
-    # poly = Polyline()
 
-    # show_help = False  # маркер отображения помощи
+    show_help = False  # маркер отображения помощи
     pause = True  # маркер паузы
 
     hue = 0  # оттенок
@@ -171,8 +191,8 @@ if __name__ == "__main__":
                     poly.count += 1
                     # steps += 1
                 # F1 - открытие/закрытие окна помощи
-                # if event.key == pygame.K_F1:
-                    # show_help = not show_help
+                if event.key == pygame.K_F1:
+                    show_help = not show_help
                 # Num- - уменьшаем количество точек сглаживания
                 if event.key == pygame.K_KP_MINUS:
                     poly.count -= 1
@@ -195,8 +215,8 @@ if __name__ == "__main__":
         if not pause:
             poly.set_points()
         # если стоит маркер окна помощи - показываем окно помощи
-        # if show_help:
-        #    draw_help()
+        if show_help:
+            draw_help()
 
         pygame.display.flip()  # перерисовка окна
 
