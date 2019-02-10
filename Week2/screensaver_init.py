@@ -114,6 +114,7 @@ def set_points(points, speeds):
 
 # Основная программа
 if __name__ == "__main__":
+    # инициализация окна
     pygame.init()
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption("MyScreenSaver")
@@ -154,8 +155,10 @@ if __name__ == "__main__":
         gameDisplay.fill((0, 0, 0))
         hue = (hue + 1) % 360
         color.hsla = (hue, 100, 50, 100)
+
         draw_points(points)
         draw_points(get_knot(points, steps), "line", 3, color)
+
         if not pause:
             set_points(points, speeds)
         if show_help:
