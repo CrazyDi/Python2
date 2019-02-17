@@ -205,7 +205,7 @@ if __name__ == "__main__":
                     working = False
                 # R - обнуляем данные
                 if event.key == pygame.K_r:
-                    poly = Polyline()
+                    poly = Knot(35)
                 # P - меняем маркер движения
                 if event.key == pygame.K_p:
                     pause = not pause
