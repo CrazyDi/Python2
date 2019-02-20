@@ -1,3 +1,15 @@
+import yaml
+
+
+hero_yaml = '''
+--- !Character
+factory:
+    !factory mage
+name:
+    7NaGiBaToR7
+'''
+
+
 class HeroFactory():
     @classmethod
     def create_hero(cls, name):
@@ -110,24 +122,35 @@ class AssassinFactory(HeroFactory):
         def cast():
             return "Invisibility"
 
-def create_hero(factory):
-    hero = factory.create_hero("Kate")
-    weapon = factory.create_weapon()
-    spell = factory.create_spell()
 
-    hero.add_weapon(weapon)
-    hero.add_spell(spell)
+def factory_constructor(loader, node):
+    data = loader.construct_scalar(node)
+    if data == "assassin":
+        return AssassinFactory
+    if data == "mage":
+        return MageFactory
+    else:
+        return WarriorFactory
 
-    return hero
+
+class Character(yaml.YAMLObject):
+    yaml_tag = "!Character"
+
+    def create_hero(self):
+        hero = self.factory.create_hero(self.name)
+        weapon = self.factory.create_weapon()
+        spell = self.factory.create_spell()
+
+        hero.add_weapon(weapon)
+        hero.add_spell(spell)
+
+        return hero
 
 
 if __name__ == "__main__":
-    factory = AssassinFactory()
-    player = create_hero(factory)
+    loader = yaml.Loader
+    loader.add_constructor("!factory", factory_constructor)
+    player = yaml.load(hero_yaml).create_hero()
     player.cast()
     player.hit()
 
-    factory = MageFactory()
-    player = create_hero(factory)
-    player.cast()
-    player.hit()
