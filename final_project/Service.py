@@ -77,9 +77,11 @@ class MapFactory(yaml.YAMLObject):
     @classmethod
     def from_yaml(cls, loader, node):
 
-        # FIXME
-        # get _map and _obj
-
+        # FIXED get _map and _obj
+        _map = cls.Map()
+        _obj = cls.Objects()
+        config = loader.construct_mapping(node)
+        _obj.config = config
         return {'map': _map, 'obj': _obj}
 
 
@@ -209,6 +211,47 @@ class RandomMap(MapFactory):
 
 # FIXME
 # add classes for YAML !empty_map and !special_map{}
+class EmptyMap(MapFactory):
+
+    yaml_tag = "!empty_map"
+
+    class Map:
+        def __init__(self):
+            self.Map = [[0 for _ in range(41)] for _ in range(41)]
+
+            for i in range(41):
+                for j in range(41):
+                    self.Map[j][i] = floor1
+
+        def get_map(self):
+            return self.Map
+
+    class Objects:
+        def __init__(self):
+            self.objects = []
+
+        def get_objects(self, _map):
+            return self.objects
+
+
+class SpecialMap(MapFactory):
+
+    yaml_tag = "!special_map"
+
+    class Map:
+        def __init__(self):
+            self.Map = [[0 for _ in range(41)] for _ in range(41)]
+
+        def get_map(self):
+            return self.Map
+
+    class Objects:
+        def __init__(self):
+            self.objects = []
+
+        def get_objects(self, _map):
+            return self.objects
+
 
 wall = [0]
 floor1 = [0]
