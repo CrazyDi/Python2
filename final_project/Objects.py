@@ -11,6 +11,10 @@ def create_sprite(img, sprite_size):
     return sprite
 
 
+class AbstractObject:
+    pass
+
+
 class Interactive(ABC):
 
     @abstractmethod
