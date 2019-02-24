@@ -8,6 +8,7 @@ colors = {
     "green": (0, 255, 0, 255),
     "blue": (0, 0, 255, 255),
     "wooden": (153, 92, 0, 255),
+    "dark-wooden": (74, 24, 0, 255)
 }
 
 
@@ -229,5 +230,44 @@ class HelpWindow(ScreenHandle):
                           (50, 50 + 30 * i))
                 self.blit(font2.render(text[1], True, ((128, 128, 255))),
                           (150, 50 + 30 * i))
+        # FIXED draw next surface in chain
+        super().draw(canvas)
+
+
+# ADDED class
+class MiniMap(ScreenHandle):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fill(colors["wooden"])
+
+    def connect_engine(self, engine):
+        super().connect_engine(engine)
+        if self.successor is not None:
+            return self.successor.connect_engine(engine)
+
+    def draw_map(self):
+        if self.game_engine.map:
+            for i in range(len(self.game_engine.map)):
+                for j in range(len(self.game_engine.map[i])):
+                    if self.game_engine.map[i][j][1] == 1:
+                        pygame.draw.rect(self, colors["dark-wooden"], [j * 5, i * 5, 5, 5])
+                    else:
+                        pygame.draw.rect(self, colors["wooden"], [j * 5, i * 5, 5, 5])
+        else:
+            self.fill(colors["white"])
+
+    def draw_hero(self):
+        pygame.draw.rect(self, colors["red"], [self.game_engine.hero.position[0] * 5,
+                                               self.game_engine.hero.position[1] * 5,
+                                               5, 5])
+
+    def draw(self, canvas):
+
+        self.draw_map()
+        # for obj in self.game_engine.objects:
+        #     self.blit(obj.sprite[0], ((obj.position[0] - self.min_x) * self.game_engine.sprite_size,
+        #                               (obj.position[1] - self.min_y) * self.game_engine.sprite_size))
+        self.draw_hero()
+
         # FIXED draw next surface in chain
         super().draw(canvas)
