@@ -12,9 +12,11 @@ def create_sprite(img, sprite_size):
 
 
 class AbstractObject:
-    pass
+    @abstractmethod
+    def draw(self, display):
+        pass
 
-
+# ADDED class
 class Interactive(ABC):
 
     @abstractmethod
@@ -32,6 +34,10 @@ class Ally(AbstractObject, Interactive):
     def interact(self, engine, hero):
         self.action(engine, hero)
 
+    # ADDED method
+    def draw(self, display):
+        display.draw_object(self.sprite, self.position)
+
 
 class Creature(AbstractObject):
 
@@ -45,6 +51,10 @@ class Creature(AbstractObject):
     def calc_max_HP(self):
         self.max_hp = 5 + self.stats["endurance"] * 2
 
+    # ADDED method
+    def draw(self, display):
+        display.draw_object(self.sprite, self.position)
+
 
 class Hero(Creature):
 
@@ -53,6 +63,7 @@ class Hero(Creature):
         self.level = 1
         self.exp = 0
         self.gold = 0
+        self.position = pos
         super().__init__(icon, stats, pos)
 
     def level_up(self):

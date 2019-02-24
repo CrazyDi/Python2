@@ -23,6 +23,8 @@ class ScreenHandle(pygame.Surface):
             self.next_coord = (0, 0)
         super().__init__(*args, **kwargs)
         self.fill(colors["wooden"])
+        self.min_x = 0
+        self.min_y = 0
 
     def draw(self, canvas):
         if self.successor is not None:
@@ -42,53 +44,47 @@ class GameSurface(ScreenHandle):
         if self.successor is not None:
             return self.successor.connect_engine(engine)
 
-
     def draw_hero(self):
         self.game_engine.hero.draw(self)
 
+    # ADDED method
+    def calculate(self):
+        if self.game_engine.hero.position[0] >= 8:
+            self.min_x = self.game_engine.hero.position[0] - 8
+
+        if self.game_engine.hero.position[1] >= 6:
+            self.min_y = self.game_engine.hero.position[1] - 6
+
     def draw_map(self):
 
-        # FIXME || calculate (min_x,min_y) - left top corner
-
-        min_x = 0
-        min_y = 0
-
-    ##
+        # FIXED || calculate (min_x,min_y) - left top corner
+        self.calculate()
 
         if self.game_engine.map:
-            for i in range(len(self.game_engine.map[0]) - min_x):
-                for j in range(len(self.game_engine.map) - min_y):
-                    self.blit(self.game_engine.map[min_y + j][min_x + i][
+            for i in range(len(self.game_engine.map[0]) - self.min_x):
+                for j in range(len(self.game_engine.map) - self.min_y):
+                    self.blit(self.game_engine.map[self.min_y + j][self.min_x + i][
                               0], (i * self.game_engine.sprite_size, j * self.game_engine.sprite_size))
         else:
             self.fill(colors["white"])
 
     def draw_object(self, sprite, coord):
-        size = self.game_engine.sprite_size
-    # FIXME || calculate (min_x,min_y) - left top corner
 
-        min_x = 0
-        min_y = 0
+        # FIXED || calculate (min_x,min_y) - left top corner
+        self.calculate()
 
-    ##
-        self.blit(sprite, ((coord[0] - min_x) * self.game_engine.sprite_size,
-                           (coord[1] - min_y) * self.game_engine.sprite_size))
+        self.blit(sprite, ((coord[0] - self.min_x) * self.game_engine.sprite_size,
+                           (coord[1] - self.min_y) * self.game_engine.sprite_size))
 
     def draw(self, canvas):
-        size = self.game_engine.sprite_size
-    # FIXME || calculate (min_x,min_y) - left top corner
+        # FIXED || calculate (min_x,min_y) - left top corner
+        self.calculate()
 
-        self.game_engine.hero.position
-
-        min_x = 0
-        min_y = 0
-
-    ##
         self.draw_map()
         for obj in self.game_engine.objects:
-            self.blit(obj.sprite[0], ((obj.position[0] - min_x) * self.game_engine.sprite_size,
-                                      (obj.position[1] - min_y) * self.game_engine.sprite_size))
-        # self.draw_hero()
+            self.blit(obj.sprite[0], ((obj.position[0] - self.min_x) * self.game_engine.sprite_size,
+                                      (obj.position[1] - self.min_y) * self.game_engine.sprite_size))
+        self.draw_hero()
 
         # FIXED draw next surface in chain
         super().draw(canvas)
@@ -160,6 +156,7 @@ class ProgressBar(ScreenHandle):
 
         # FIXED draw next surface in chain
         super().draw(canvas)
+
 
 class InfoWindow(ScreenHandle):
 
