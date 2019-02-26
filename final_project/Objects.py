@@ -73,6 +73,7 @@ class Enemy(Creature, Interactive):
         hero.exp += self.experience
         self.action(engine, hero)
 
+
     # ADDED method
     def draw(self, display):
         display.draw_object(self.sprite, self.position)

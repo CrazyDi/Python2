@@ -79,7 +79,7 @@ def enemy_hit(engine, hero):
     else:
         for m in hero.level_up():
             engine.notify(m)
-    add_gold(engine, hero)
+        add_gold(engine, hero)
 
 
 class MapFactory(yaml.YAMLObject):
