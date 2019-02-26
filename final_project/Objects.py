@@ -26,9 +26,10 @@ class Interactive(ABC):
 
 class Ally(AbstractObject, Interactive):
 
-    def __init__(self, icon, action, position):
+    def __init__(self, icon, action, action_name, position):
         self.sprite = icon
         self.action = action
+        self.action_name = action_name
         self.position = position
 
     def interact(self, engine, hero):
@@ -50,6 +51,27 @@ class Creature(AbstractObject):
 
     def calc_max_HP(self):
         self.max_hp = 5 + self.stats["endurance"] * 2
+
+    # ADDED method
+    def draw(self, display):
+        display.draw_object(self.sprite, self.position)
+
+    def get_stats(self):
+        return self.stats.copy()
+
+# ADDED class
+class Enemy(Creature, Interactive):
+
+    def __init__(self, icon, stats, action_name, experience, position):
+        super().__init__(icon, stats, position)
+        self.experience = experience
+        self.action = stats['action']
+        self.action_name = action_name
+
+    def interact(self, engine, hero):
+        hero.hp -= self.stats['strength']
+        hero.exp += self.experience
+        self.action(engine, hero)
 
     # ADDED method
     def draw(self, display):
@@ -140,5 +162,33 @@ class Effect(Hero):
         pass
 
 
-# FIXME
+# FIXED
 # add classes
+# ADDED class
+class Berserk(Effect):
+    def apply_effect(self):
+        self.hp += 50
+        self.stats["strength"] += 7
+        self.stats["endurance"] += 7
+        self.stats["luck"] += 7
+        self.stats["intelligence"] -= 3
+
+
+# ADDED class
+class Blessing(Effect):
+    def apply_effect(self):
+        self.hp += 10
+        self.stats["strength"] += 2
+        self.stats["endurance"] += 2
+        self.stats["luck"] += 2
+        self.stats["intelligence"] -= 2
+
+
+# ADDED class
+class Weakness(Effect):
+    def apply_effect(self):
+        self.hp -= 10
+        self.stats["strength"] -= 4
+        self.stats["endurance"] -= 4
+        self.stats["luck"] -= 4
+        self.stats["intelligence"] -= 4

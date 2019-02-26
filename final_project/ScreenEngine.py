@@ -8,7 +8,8 @@ colors = {
     "green": (0, 255, 0, 255),
     "blue": (0, 0, 255, 255),
     "wooden": (153, 92, 0, 255),
-    "dark-wooden": (74, 24, 0, 255)
+    "dark-wooden": (74, 24, 0, 255),
+    "yellow": (255, 242, 0, 255)
 }
 
 
@@ -257,16 +258,31 @@ class MiniMap(ScreenHandle):
             self.fill(colors["white"])
 
     def draw_hero(self):
-        pygame.draw.rect(self, colors["red"], [self.game_engine.hero.position[0] * 5,
-                                               self.game_engine.hero.position[1] * 5,
-                                               5, 5])
+        pygame.draw.rect(self, colors["blue"], [self.game_engine.hero.position[0] * 5,
+                                                self.game_engine.hero.position[1] * 5,
+                                                5, 5])
 
     def draw(self, canvas):
 
         self.draw_map()
-        # for obj in self.game_engine.objects:
-        #     self.blit(obj.sprite[0], ((obj.position[0] - self.min_x) * self.game_engine.sprite_size,
-        #                               (obj.position[1] - self.min_y) * self.game_engine.sprite_size))
+        for obj in self.game_engine.objects:
+            if obj.action_name == 'stairs':
+                pygame.draw.rect(self, colors["white"], [obj.position[0] * 5,
+                                                         obj.position[1] * 5,
+                                                         5, 5])
+            elif obj.action_name == 'chest':
+                pygame.draw.rect(self, colors["yellow"], [obj.position[0] * 5,
+                                                          obj.position[1] * 5,
+                                                         5, 5])
+            elif obj.action_name == 'bless' or obj.action_name == 'remove' or obj.action_name == 'heal':
+                pygame.draw.rect(self, colors["green"], [obj.position[0] * 5,
+                                                         obj.position[1] * 5,
+                                                          5, 5])
+            elif obj.action_name == 'rat' or obj.action_name == 'naga' or obj.action_name == 'dragon' or obj.action_name == "knight":
+                pygame.draw.rect(self, colors["red"], [obj.position[0] * 5,
+                                                       obj.position[1] * 5,
+                                                       5, 5])
+
         self.draw_hero()
 
         # FIXED draw next surface in chain
