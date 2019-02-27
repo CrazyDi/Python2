@@ -25,6 +25,11 @@ ally:
     action: restore_hp
     min-count: 0
     max-count: 3
+  clover:
+    sprite: [clover.png]
+    action: clover
+    min-count: 1
+    max-count: 3
 enemies:
   rat:
     sprite: [rat.png]
@@ -54,3 +59,10 @@ enemies:
     intelligence: 50
     luck: 5
     experience: 1000
+  diablo:
+    sprite: [diablo.png]
+    strength: 100
+    endurance: 100
+    intelligence: 100
+    luck: 50
+    experience: 2000

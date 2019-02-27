@@ -71,7 +71,7 @@ def add_gold(engine, hero):
         hero.gold += gold
         engine.notify(f"{gold} gold added")
 
-
+# ADDED function
 def enemy_hit(engine, hero):
     if hero.hp <= 0:
         engine.notify("GAME OVER")
@@ -81,6 +81,10 @@ def enemy_hit(engine, hero):
             engine.notify(m)
         add_gold(engine, hero)
 
+
+# ADDED function
+def mega_luck(engine, hero):
+    engine.hero = Objects.MegaLuck(hero)
 
 class MapFactory(yaml.YAMLObject):
 
@@ -454,10 +458,12 @@ def service_init(sprite_size, full=True):
                            'apply_blessing': apply_blessing,
                            'remove_effect': remove_effect,
                            'restore_hp': restore_hp,
+                           'clover': mega_luck,
                            'rat': enemy_hit,
                            'naga': enemy_hit,
                            'dragon': enemy_hit,
-                           'knight': enemy_hit}
+                           'knight': enemy_hit,
+                           'diablo': enemy_hit}
 
     for obj in object_list_prob['objects']:
         prop = object_list_prob['objects'][obj]

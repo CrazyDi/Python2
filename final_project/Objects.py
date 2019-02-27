@@ -59,6 +59,7 @@ class Creature(AbstractObject):
     def get_stats(self):
         return self.stats.copy()
 
+
 # ADDED class
 class Enemy(Creature, Interactive):
 
@@ -72,7 +73,6 @@ class Enemy(Creature, Interactive):
         hero.hp -= self.stats['strength']
         hero.exp += self.experience
         self.action(engine, hero)
-
 
     # ADDED method
     def draw(self, display):
@@ -193,3 +193,9 @@ class Weakness(Effect):
         self.stats["endurance"] -= 4
         self.stats["luck"] -= 4
         self.stats["intelligence"] -= 4
+
+
+# ADDED effect-class
+class MegaLuck(Effect):
+    def apply_effect(self):
+        self.stats['luck'] += 100

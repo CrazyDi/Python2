@@ -274,11 +274,11 @@ class MiniMap(ScreenHandle):
                 pygame.draw.rect(self, colors["yellow"], [obj.position[0] * 5,
                                                           obj.position[1] * 5,
                                                          5, 5])
-            elif obj.action_name == 'bless' or obj.action_name == 'remove' or obj.action_name == 'heal':
+            elif obj.action_name == 'bless' or obj.action_name == 'remove' or obj.action_name == 'heal' or obj.action_name == 'clover':
                 pygame.draw.rect(self, colors["green"], [obj.position[0] * 5,
                                                          obj.position[1] * 5,
                                                           5, 5])
-            elif obj.action_name == 'rat' or obj.action_name == 'naga' or obj.action_name == 'dragon' or obj.action_name == "knight":
+            elif obj.action_name == 'rat' or obj.action_name == 'naga' or obj.action_name == 'dragon' or obj.action_name == "knight" or obj.action_name == 'diablo':
                 pygame.draw.rect(self, colors["red"], [obj.position[0] * 5,
                                                        obj.position[1] * 5,
                                                        5, 5])
