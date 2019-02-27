@@ -33,15 +33,13 @@ def create_game(sprite_size, is_new):
         engine = Logic.GameEngine()
         Service.service_init(sprite_size)
         Service.reload_game(engine, hero)
-
         drawer = ScreenEngine.GameSurface((640, 480), pygame.SRCALPHA, (0, 480),
-                                            ScreenEngine.ProgressBar((640, 120), (640, 0),
-                                                    ScreenEngine.InfoWindow((160, 600), (50, 50),
-                                                                  ScreenEngine.HelpWindow((700, 500), pygame.SRCALPHA, (0, 0),
-                                                                               ScreenEngine.MiniMap((39 * 5, 11 * 5), (0, 480),
-                                                                                    ScreenEngine.ScreenHandle(
-                                                                                            (0, 0))
-                                                                                    )))))
+                                ScreenEngine.ProgressBar((640, 120), (640, 0),
+                                    ScreenEngine.InfoWindow((160, 600), (50, 50),
+                                        ScreenEngine.HelpWindow((700, 500), pygame.SRCALPHA, (0, 0),
+                                            ScreenEngine.MiniMap((235, 67), (0, 0),
+                                                ScreenEngine.ScreenHandle((0, 0))
+                                                )))))
 
     else:
         engine.sprite_size = sprite_size
