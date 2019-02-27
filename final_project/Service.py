@@ -24,9 +24,9 @@ def reload_game(engine, hero):
 
     engine.objects = []
     generator = level_list[min(engine.level, level_list_max)]
-    _map = generator['map'].get_map()
+    _map = generator['map'].create_map()
     engine.load_map(_map)
-    engine.add_objects(generator['obj'].get_objects(_map))
+    engine.add_objects(generator['obj'].create_objects(_map))
     engine.add_hero(hero)
 
 
@@ -98,6 +98,14 @@ class MapFactory(yaml.YAMLObject):
         _obj.config = config
         return {'map': _map, 'obj': _obj}
 
+    @classmethod
+    def create_map(cls):
+        return cls.Map()
+
+    @classmethod
+    def create_objects(cls):
+        return cls.Objects()
+
 
 class EndMap(MapFactory):
 
@@ -122,14 +130,14 @@ class EndMap(MapFactory):
                 for j in range(len(i)):
                     i[j] = wall if i[j] == '0' else floor1
          
-        def get_map(self):
+        def create_map(self):
             return self.Map
 
     class Objects:
         def __init__(self):
             self.objects = []
 
-        def get_objects(self, _map):
+        def create_objects(self, _map):
             return self.objects
 
 
@@ -148,7 +156,7 @@ class RandomMap(MapFactory):
                         self.Map[j][i] = [wall, floor1, floor2, floor3, floor1,
                                           floor2, floor3, floor1, floor2][random.randint(0, 8)]
 
-        def get_map(self):
+        def create_map(self):
             return self.Map
 
     class Objects:
@@ -156,7 +164,7 @@ class RandomMap(MapFactory):
         def __init__(self):
             self.objects = []
 
-        def get_objects(self, _map):
+        def create_objects(self, _map):
 
             for obj_name in object_list_prob['objects']:
                 prop = object_list_prob['objects'][obj_name]
@@ -251,14 +259,14 @@ class EmptyMap(MapFactory):
                 for j in range(len(i)):
                     i[j] = wall if i[j] == '0' else floor1
 
-        def get_map(self):
+        def create_map(self):
             return self.Map
 
     class Objects:
         def __init__(self):
             self.objects = []
 
-        def get_objects(self, _map):
+        def create_objects(self, _map):
 
             for obj_name in object_list_prob['objects']:
                 prop = object_list_prob['objects'][obj_name]
@@ -350,14 +358,14 @@ class SpecialMap(MapFactory):
                 for j in range(len(i)):
                     i[j] = wall if i[j] == '0' else floor2
 
-        def get_map(self):
+        def create_map(self):
             return self.Map
 
     class Objects:
         def __init__(self):
             self.objects = []
 
-        def get_objects(self, _map):
+        def create_objects(self, _map):
 
             for obj_name in object_list_prob['objects']:
                 prop = object_list_prob['objects'][obj_name]
